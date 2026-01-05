@@ -1,8 +1,7 @@
-var pageurl = window.location.protocol + '//' + window.location.host + window.location.pathname;
 var page_reload = false;
 
 function copy(src){
-    var url = pageurl + src.slice(2);
+    var url = new URL(src, window.location.href).href;
     new clipBoard(document.getElementById('list'), {
         beforeCopy: function() {
             
@@ -17,7 +16,7 @@ function copy(src){
 }
 
 function qrcode(src){
-    var url = pageurl + src.slice(2);
+    var url = new URL(src, window.location.href).href;
     var content = '<center style="margin:15px 10px 5px 10px;" id="qrcode"></center>';
 	layer.open({
 		type: 1,
@@ -57,7 +56,7 @@ function filehash(path){
 }
 
 function view_image(src){
-    var resourcesUrl = pageurl + src.slice(2);
+    var resourcesUrl = new URL(src, window.location.href).href;
 
     var img = new Image();
     img.onload = function () {//避免图片还未加载完成无法获取到图片的大小。
@@ -96,7 +95,7 @@ function view_audio(src){
     }
     $.each(audio_list, function(key, item){
         item.artist = 'artist';
-        item.cover = './_dir/static/images/music.png';
+        item.cover = new URL('./_dir/static/images/music.png', window.location.href).href;
     });
     var index = audio_list.findIndex(item => item.url == src);
     if(index == -1){
@@ -126,18 +125,18 @@ function view_audio(src){
 	});*/
 }
 
-function view_video(name, path){
+function view_video(name, src){
     if(aplayer && aplayer.audio && !aplayer.audio.paused){
         aplayer.pause();
     }
-	var apiurl = './?c=video&path=' + encodeURIComponent(path);
+    var videoUrl = new URL(src, window.location.href).href;
 	layer.open({
-        type: 2,
+        type: 1,
         shade: 0.6,
 		title: '视频播放器 - ' + name,
 	  	area: [$(window).width() > 768 ? '68%' : '95%', $(window).width() > 768 ? '78%' : '280px'],
         shadeClose: true,
-	  	content: apiurl
+	  	content: '<video src="'+videoUrl+'" controls preload="auto" style="width: 100%; height: 100%; background-color: black;"></video>'
 	});
 }
 
@@ -162,7 +161,7 @@ function view_text(name, path){
 }
 
 function view_office(name, src){
-	var url = pageurl + src.slice(2);
+	var url = new URL(src, window.location.href).href;
 	var apiurl = 'https://view.officeapps.live.com/op/view.aspx?src=' + encodeURIComponent(url);
 	layer.open({
 		title: name,
